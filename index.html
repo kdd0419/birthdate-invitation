@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Invitation: 김동국</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+    <header class="hero section">
+        <div class="container fade-in">
+            <h2 class="sub-title">BIRTHDAY INVITATION</h2>
+            <h1 class="main-title">Happy Birthday!</h1>
+            <p class="name">김동국</p>
+        </div>
+    </header>
+
+    <section class="countdown section">
+        <div class="container fade-in">
+            <h3 class="section-title">Coming Soon</h3>
+            <div id="timer" class="timer-display">
+                <div class="timer-item"><span id="days">00</span><small>DAYS</small></div>
+                <div class="timer-item"><span id="hours">00</span><small>HOURS</small></div>
+                <div class="timer-item"><span id="minutes">00</span><small>MINUTES</small></div>
+                <div class="timer-item"><span id="seconds">00</span><small>SECONDS</small></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="info section">
+        <div class="container fade-in">
+            <h3 class="section-title">Date & Location</h3>
+            <div class="info-content">
+                <div class="info-item">
+                    <p class="label">DATE</p>
+                    <p class="value">2026.04.16 THU 19:30</p>
+                </div>
+                <div class="info-divider"></div>
+                <div class="info-item">
+                    <p class="label">LOCATION</p>
+                    <p class="value">광화문 인근 식당 (미정)</p>
+                    <a href="#" class="btn-map" onclick="alert('추후 업데이트 예정입니다.'); return false;">지도 보기</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 Birthday Celebration</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
