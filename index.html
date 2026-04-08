@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Birthday Invitation: 김동국</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,15 +12,30 @@
 </head>
 <body>
     <canvas id="confetti-canvas"></canvas>
-    <header class="hero section">
+    <button id="confetti-trigger" class="btn-confetti" title="다시 축하하기">🎉</button>
+    
+    <nav class="side-nav">
+        <ul>
+            <li><a href="#hero"><span class="dot"></span><span class="label"><span class="nav-icon">🏠</span><span class="nav-text">Home</span></span></a></li>
+            <li><a href="#countdown"><span class="dot"></span><span class="label"><span class="nav-icon">⏳</span><span class="nav-text">Coming Soon</span></span></a></li>
+            <li><a href="#info"><span class="dot"></span><span class="label"><span class="nav-icon">📍</span><span class="nav-text">Location</span></span></a></li>
+            <li><a href="#rsvp"><span class="dot"></span><span class="label"><span class="nav-icon">💌</span><span class="nav-text">RSVP</span></span></a></li>
+            <li><a href="#records"><span class="dot"></span><span class="label"><span class="nav-icon">📋</span><span class="nav-text">Guest & List</span></span></a></li>
+        </ul>
+    </nav>
+
+    <header id="hero" class="hero section">
         <div class="container fade-in">
             <h2 class="sub-title">BIRTHDAY INVITATION</h2>
             <h1 class="main-title">Happy Birthday!</h1>
             <p class="name">김동국</p>
         </div>
+        <button class="scroll-indicator" onclick="window.scrollTo({top: window.innerHeight, behavior: 'smooth'})" aria-label="아래로 스크롤" title="아래로 스크롤하여 더 알아보기">
+            <div class="arrow"></div>
+        </button>
     </header>
 
-    <section class="countdown section">
+    <section id="countdown" class="countdown section">
         <div class="container fade-in">
             <h3 class="section-title">Coming Soon</h3>
             <div id="timer" class="timer-display">
@@ -31,7 +47,7 @@
         </div>
     </section>
 
-    <section class="info section">
+    <section id="info" class="info section">
         <div class="container fade-in">
             <h3 class="section-title">Date & Location</h3>
             <div class="info-content">
@@ -49,10 +65,70 @@
         </div>
     </section>
 
+    <section id="rsvp" class="rsvp section">
+        <div class="container fade-in">
+            <h3 class="section-title">RSVP & Recommendations</h3>
+            <div class="forms-container">
+                <div class="form-wrapper">
+                    <h4 class="form-title">참석 여부</h4>
+                    <form id="rsvp-form" class="rsvp-form">
+                        <div class="form-group">
+                            <label for="guest-name">이름</label>
+                            <input type="text" id="guest-name" name="name" placeholder="성함을 입력해주세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label>참석 여부</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="attendance" value="참여" required> 참여</label>
+                                <label><input type="radio" name="attendance" value="불참"> 불참</label>
+                                <label><input type="radio" name="attendance" value="보류"> 보류</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-submit">제출하기</button>
+                    </form>
+                </div>
+
+                <div class="form-wrapper">
+                    <h4 class="form-title">식당 추천</h4>
+                    <form id="recommend-form" class="recommend-form">
+                        <div class="form-group">
+                            <label for="restaurant-name">식당 이름</label>
+                            <input type="text" id="restaurant-name" name="restaurant" placeholder="추천하는 식당 이름을 입력해주세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-url">URL</label>
+                            <input type="url" id="restaurant-url" name="url" placeholder="식당 정보 URL (네이버 지도 등)" required>
+                        </div>
+                        <button type="submit" class="btn-submit">추천하기</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="records" class="records section">
+        <div class="container fade-in">
+            <div class="records-grid">
+                <div class="record-column">
+                    <h3 class="section-title">Guest List</h3>
+                    <div id="guest-list" class="guest-list">
+                        <p class="loading">불러오는 중...</p>
+                    </div>
+                </div>
+                <div class="record-column">
+                    <h3 class="section-title">Recommendations</h3>
+                    <div id="recommend-list" class="recommend-list">
+                        <p class="loading">불러오는 중...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <footer class="footer">
         <p>&copy; 2026 Birthday Celebration</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.min.js"></script>
 </body>
 </html>
