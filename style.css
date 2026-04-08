@@ -3,7 +3,7 @@
     --text-main: #2C3E50;
     --accent-color: #D4AF37;
     --muted-color: #8E9AAF;
-    --font-serif: "Playfair Display", serif;
+    --font-serif: "Playfair Display", "Noto Sans KR", serif; /* 한국어는 Noto Sans KR로 폴백 */
     --font-sans: "Noto Sans KR", sans-serif;
     --container-width: 90%;
     --max-content-width: 1100px;
@@ -13,12 +13,16 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: var(--font-sans); /* 전체 기본 폰트를 Noto Sans KR로 설정 */
+}
+
+html {
+    scroll-behavior: smooth; /* 부드러운 스크롤 활성화 */
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
-    font-family: var(--font-sans);
     line-height: 1.6;
     overflow-x: hidden;
 }
@@ -31,6 +35,88 @@ body {
     height: 100%;
     z-index: 9999;
     pointer-events: none;
+}
+
+/* Side Navigation */
+.side-nav {
+    position: fixed;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    display: none; /* 기본적으로 숨김 (모바일) */
+}
+
+.side-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.side-nav li {
+    margin: 20px 0;
+}
+
+.side-nav a {
+    display: flex;
+    align-items: center; /* 점과 라벨의 세로 중앙 정렬 */
+    text-decoration: none;
+    min-height: 24px;
+}
+
+.side-nav .dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--muted-color);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.side-nav .label {
+    margin-left: 15px;
+    margin-bottom: 0; /* 기존 .label에서 상속되는 마진 제거 */
+    font-size: 0.75rem;
+    color: var(--text-main);
+    font-family: var(--font-serif);
+    letter-spacing: 1px;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    opacity: 0; /* 기본적으로 숨김 */
+}
+
+.side-nav .nav-icon {
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.side-nav .nav-text {
+    display: none; /* 기본적으로 텍스트 숨김 */
+    font-weight: 600;
+}
+
+/* 네비게이션 컨테이너에 호버 시 라벨(아이콘) 표시 */
+.side-nav:hover .label {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 특정 아이템에 호버 시 스타일 변화 */
+.side-nav a:hover .dot {
+    background-color: var(--accent-color);
+    transform: scale(1.5);
+}
+
+.side-nav a:hover .nav-icon {
+    display: none; /* 호버 시 아이콘 숨김 */
+}
+
+.side-nav a:hover .nav-text {
+    display: inline-block; /* 호버 시 텍스트 표시 */
 }
 
 /* --- Base Styles (Mobile-first, 1 column stack) --- */
@@ -61,6 +147,7 @@ body {
     display: flex;
     align-items: center;
     background: radial-gradient(circle at center, #ffffff 0%, #FAF9F6 100%);
+    position: relative; /* 화살표 배치를 위해 추가 */
 }
 
 .sub-title {
@@ -81,6 +168,55 @@ body {
     font-size: 1.2rem;
     letter-spacing: 2px;
     font-weight: 300;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.5); /* 반투명 화이트 배경 */
+    border: 1px solid rgba(212, 175, 55, 0.2); /* 미세한 골드 테두리 */
+    border-radius: 50%;
+    outline: none;
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+.scroll-indicator:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: var(--accent-color);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+    transform: translateX(-50%) translateY(-5px);
+}
+
+.scroll-indicator .arrow {
+    width: 12px;
+    height: 12px;
+    border-right: 2px solid var(--accent-color);
+    border-bottom: 2px solid var(--accent-color);
+    transform: rotate(45deg);
+    margin-top: -4px; /* 시각적 중앙 정렬 조정 */
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) rotate(45deg);
+    }
+    40% {
+        transform: translateY(-10px) rotate(45deg);
+    }
+    60% {
+        transform: translateY(-5px) rotate(45deg);
+    }
 }
 
 /* Countdown Section */
@@ -159,6 +295,187 @@ body {
     text-align: center;
 }
 
+/* Forms Section */
+.forms-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.form-wrapper {
+    background: white;
+    padding: 30px 20px;
+    border: 1px solid #f0f0f0;
+    text-align: left;
+}
+
+.form-title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    color: var(--text-main);
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--accent-color);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.form-group input[type="text"],
+.form-group input[type="url"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #eee;
+    background-color: #fafafa;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--text-main);
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.radio-group {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.radio-group input[type="radio"] {
+    accent-color: var(--accent-color);
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--text-main);
+    color: white;
+    border: none;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.btn-submit:hover {
+    background-color: var(--accent-color);
+}
+
+/* Records Section Styles */
+.records-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+}
+
+.record-column {
+    flex: 1;
+}
+
+.guest-list, .recommend-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.guest-item, .recommend-item {
+    background: white;
+    padding: 15px;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.guest-item:hover, .recommend-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-color: var(--accent-color);
+}
+
+.guest-name, .recommend-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.guest-status {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 1px;
+}
+
+.status-yes { background-color: #e8f5e9; color: #2e7d32; }
+.status-no { background-color: #ffebee; color: #c62828; }
+.status-maybe { background-color: #fff3e0; color: #ef6c00; }
+
+.recommend-link {
+    font-size: 0.7rem;
+    color: var(--muted-color);
+    text-decoration: underline;
+}
+
+.loading, .no-data {
+    grid-column: 1 / -1;
+    font-size: 0.8rem;
+    color: var(--muted-color);
+    padding: 40px 0;
+}
+
+.btn-confetti {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    background: var(--text-main); /* 어두운 색상으로 변경 */
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.btn-confetti:hover {
+    transform: scale(1.1);
+    background: var(--accent-color); /* 호버 시 강조색으로 변경 */
+}
+
 .fade-in {
     opacity: 0;
     transform: translateY(20px);
@@ -186,12 +503,6 @@ body {
     }
     .info-content {
         padding: 50px;
-    }
-}
-
-/* --- Breakpoint: Desktop (1024px+) Side-by-Side --- */
-@media (min-width: 1024px) {
-    .info-content {
         flex-direction: row; /* 가로 배치 (Side-by-side) */
         align-items: center;
         text-align: left;
@@ -206,6 +517,38 @@ body {
     .info-item {
         text-align: center; /* 내부 텍스트는 중앙 정렬 유지 */
     }
+    
+    .side-nav {
+        display: block; /* 태블릿 이상에서 네비게이션 표시 */
+    }
+
+    .forms-container {
+        flex-direction: row; /* 폼 가로 배치 */
+        justify-content: center;
+        align-items: stretch; /* 높이 동일하게 */
+        gap: 40px;
+    }
+
+    .form-wrapper {
+        flex: 1;
+        max-width: 500px;
+        padding: 40px;
+    }
+
+    .records-grid {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 40px;
+    }
+
+    .guest-list, .recommend-list {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 20px;
+    }
+}
+
+/* --- Breakpoint: Desktop (1024px+) Side-by-Side --- */
+@media (min-width: 1024px) {
 
     .container {
         padding: 0 50px;
