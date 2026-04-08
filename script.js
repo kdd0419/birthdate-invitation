@@ -1,3 +1,12 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getDatabase, ref, push, set, serverTimestamp, onValue } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+
+const firebaseConfig = window.FIREBASE_CONFIG;
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 document.addEventListener('DOMContentLoaded', () => {
     // 0. Confetti Animation
     const canvas = document.getElementById('confetti-canvas');
@@ -58,7 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    let isAnimating = false;
     function animate() {
+        isAnimating = true;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         pieces = pieces.filter(p => p.opacity > 0);
         pieces.forEach(p => {
@@ -67,13 +78,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         if (pieces.length > 0) {
             requestAnimationFrame(animate);
+        } else {
+            isAnimating = false;
+        }
+    }
+
+    function startConfetti() {
+        initConfetti();
+        if (!isAnimating) {
+            animate();
         }
     }
 
     window.addEventListener('resize', setupCanvas);
     setupCanvas();
-    initConfetti();
-    animate();
+    startConfetti();
+
+    // Confetti Trigger
+    const confettiTrigger = document.getElementById('confetti-trigger');
+    if (confettiTrigger) {
+        confettiTrigger.addEventListener('click', () => {
+            startConfetti();
+        });
+    }
 
     // 1. Countdown Timer
     const targetDate = new Date('April 16, 2026 19:30:00').getTime();
@@ -115,4 +142,126 @@ document.addEventListener('DOMContentLoaded', () => {
     }, observerOptions);
 
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // 3. Form Submissions (Firebase Realtime Database)
+    const rsvpForm = document.getElementById('rsvp-form');
+    const recommendForm = document.getElementById('recommend-form');
+
+    if (rsvpForm) {
+        rsvpForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = rsvpForm.querySelector('button');
+            const originalBtnText = submitBtn.innerText;
+            
+            const formData = new FormData(rsvpForm);
+            const rsvpData = {
+                name: formData.get('name'),
+                attendance: formData.get('attendance'),
+                timestamp: serverTimestamp()
+            };
+
+            try {
+                submitBtn.innerText = "제출 중...";
+                submitBtn.disabled = true;
+                
+                const rsvpRef = ref(db, 'rsvp');
+                const newRsvpRef = push(rsvpRef);
+                await set(newRsvpRef, rsvpData);
+                
+                alert(`${rsvpData.name}님, 참석 여부가 성공적으로 제출되었습니다!`);
+                rsvpForm.reset();
+            } catch (error) {
+                console.error("Error saving to database: ", error);
+                alert("제출 중 오류가 발생했습니다. 다시 시도해주세요.");
+            } finally {
+                submitBtn.innerText = originalBtnText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
+    if (recommendForm) {
+        recommendForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = recommendForm.querySelector('button');
+            const originalBtnText = submitBtn.innerText;
+            
+            const formData = new FormData(recommendForm);
+            const recommendData = {
+                restaurant: formData.get('restaurant'),
+                url: formData.get('url'),
+                timestamp: serverTimestamp()
+            };
+
+            try {
+                submitBtn.innerText = "추천 중...";
+                submitBtn.disabled = true;
+
+                const recommendRef = ref(db, 'recommendations');
+                const newRecommendRef = push(recommendRef);
+                await set(newRecommendRef, recommendData);
+                
+                alert(`식당 '${recommendData.restaurant}' 추천이 제출되었습니다. 감사합니다!`);
+                recommendForm.reset();
+            } catch (error) {
+                console.error("Error saving to database: ", error);
+                alert("제출 중 오류가 발생했습니다. 다시 시도해주세요.");
+            } finally {
+                submitBtn.innerText = originalBtnText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
+    // 4. Fetch Records (Guest List & Recommendations)
+    const guestListElement = document.getElementById('guest-list');
+    const recommendListElement = document.getElementById('recommend-list');
+
+    // Guest List
+    if (guestListElement) {
+        const rsvpRef = ref(db, 'rsvp');
+        onValue(rsvpRef, (snapshot) => {
+            const data = snapshot.val();
+            if (!data) {
+                guestListElement.innerHTML = '<p class="no-data">아직 참석 등록이 없습니다.</p>';
+                return;
+            }
+
+            const guests = Object.values(data).sort((a, b) => b.timestamp - a.timestamp);
+            guestListElement.innerHTML = '';
+            guests.forEach(guest => {
+                const guestItem = document.createElement('div');
+                guestItem.className = 'guest-item';
+                let attendanceClass = guest.attendance === '참여' ? 'status-yes' : guest.attendance === '불참' ? 'status-no' : 'status-maybe';
+                guestItem.innerHTML = `<span class="guest-name">${guest.name}</span><span class="guest-status ${attendanceClass}">${guest.attendance}</span>`;
+                guestListElement.appendChild(guestItem);
+            });
+        });
+    }
+
+    // Recommendations
+    if (recommendListElement) {
+        const recommendRef = ref(db, 'recommendations');
+        onValue(recommendRef, (snapshot) => {
+            const data = snapshot.val();
+            if (!data) {
+                recommendListElement.innerHTML = '<p class="no-data">아직 추천된 식당이 없습니다.</p>';
+                return;
+            }
+
+            const recommendations = Object.values(data).sort((a, b) => b.timestamp - a.timestamp);
+            recommendListElement.innerHTML = '';
+            recommendations.forEach(item => {
+                const itemElement = document.createElement('a');
+                itemElement.className = 'recommend-item';
+                itemElement.href = item.url;
+                itemElement.target = '_blank';
+                itemElement.innerHTML = `
+                    <span class="recommend-name">${item.restaurant}</span>
+                    <span class="recommend-link">지도 보기 🔗</span>
+                `;
+                recommendListElement.appendChild(itemElement);
+            });
+        });
+    }
 });
