@@ -180,39 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (recommendForm) {
-        recommendForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = recommendForm.querySelector('button');
-            const originalBtnText = submitBtn.innerText;
-            
-            const formData = new FormData(recommendForm);
-            const recommendData = {
-                restaurant: formData.get('restaurant'),
-                url: formData.get('url'),
-                timestamp: serverTimestamp()
-            };
-
-            try {
-                submitBtn.innerText = "추천 중...";
-                submitBtn.disabled = true;
-
-                const recommendRef = ref(db, 'recommendations');
-                const newRecommendRef = push(recommendRef);
-                await set(newRecommendRef, recommendData);
-                
-                alert(`식당 '${recommendData.restaurant}' 추천이 제출되었습니다. 감사합니다!`);
-                recommendForm.reset();
-            } catch (error) {
-                console.error("Error saving to database: ", error);
-                alert("제출 중 오류가 발생했습니다. 다시 시도해주세요.");
-            } finally {
-                submitBtn.innerText = originalBtnText;
-                submitBtn.disabled = false;
-            }
-        });
-    }
-
     // 4. Fetch Records (Guest List & Recommendations)
     const guestListElement = document.getElementById('guest-list');
     const recommendListElement = document.getElementById('recommend-list');

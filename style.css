@@ -308,6 +308,58 @@ body {
     padding: 30px 20px;
     border: 1px solid #f0f0f0;
     text-align: left;
+    position: relative; /* 오버레이 배치를 위해 추가 */
+}
+
+/* 폼 종료 상태 스타일 */
+.form-wrapper.is-closed {
+    overflow: hidden;
+}
+
+.form-wrapper.is-closed .form-title,
+.form-wrapper.is-closed .recommend-form {
+    opacity: 0.2; /* 배경이 될 폼 콘텐츠를 흐리게 처리 */
+    filter: blur(1px);
+    pointer-events: none; /* 클릭 방지 */
+    user-select: none;
+}
+
+.form-closed-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    background: rgba(255, 255, 255, 0.6); /* 살짝 밝은 배경 */
+    padding: 30px;
+    text-align: center;
+}
+
+.form-closed-icon {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.form-closed-message {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    color: var(--text-main);
+    line-height: 1.8;
+    word-break: keep-all;
+}
+
+.form-closed-message span {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    margin-top: 10px;
+    letter-spacing: 0.5px;
 }
 
 .form-title {
